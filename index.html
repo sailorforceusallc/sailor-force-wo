@@ -1028,19 +1028,29 @@ function setLoading(msg) {
 
 // ── API helpers ──
 async function apiSave(woId, phase, pin, payload) {
+  const body = JSON.stringify({ action: 'save', wo_id: woId, phase, pin, payload });
   const resp = await fetch(GAS_URL, {
     method: 'POST',
-    body: JSON.stringify({ action: 'save', wo_id: woId, phase, pin, payload })
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: body
   });
-  return resp.json();
+  const text = await resp.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Server response: ' + text.slice(0, 200)); }
 }
 
 async function apiLoad(woId) {
+  const body = JSON.stringify({ action: 'load', wo_id: woId });
   const resp = await fetch(GAS_URL, {
     method: 'POST',
-    body: JSON.stringify({ action: 'load', wo_id: woId })
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: body
   });
-  return resp.json();
+  const text = await resp.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Server response: ' + text.slice(0, 200)); }
 }
 
 // ── MANAGER: Lock & send to tech ──
